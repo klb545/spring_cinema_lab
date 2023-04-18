@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,11 +18,12 @@ public class MovieController {
     @Autowired
     MovieService movieService;
 
-    @GetMapping
-    public ResponseEntity<List<Movie>> getAllMovies(){
-        List<Movie> movies = movieService.getAllMovies();
-        return new ResponseEntity<>(movies, HttpStatus.OK);
-    }
+////    MVP version of the getAllMovies() method. Replaced with advanced extension beginning line 68.
+//    @GetMapping
+//    public ResponseEntity<List<Movie>> getAllMovies(){
+//        List<Movie> movies = movieService.getAllMovies();
+//        return new ResponseEntity<>(movies, HttpStatus.OK);
+//    }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<Movie> getMovieById(@PathVariable int id){
@@ -60,6 +62,26 @@ public class MovieController {
         } else {
             return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
         }
+    }
+
+
+//      ADVANCED EXTENSION
+    @GetMapping
+    public ResponseEntity<List<Movie>> getAllMovies(@RequestParam(required = false) Integer maxDuration){
+
+        List<Movie> movies = movieService.getAllMovies();
+        if (maxDuration == null){
+            return new ResponseEntity<>(movies, HttpStatus.OK);
+        }
+
+        List<Movie> moviesFilteredByDuration = new ArrayList<>();
+        for(int i = 0; i < movies.size(); i++) {
+            if(movies.get(i).getDuration() <= maxDuration.intValue()) {
+                moviesFilteredByDuration.add(movies.get(i));
+            }
+        }
+        return new ResponseEntity<>(moviesFilteredByDuration, HttpStatus.OK);
+
     }
 
 
