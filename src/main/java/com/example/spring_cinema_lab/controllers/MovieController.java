@@ -39,6 +39,29 @@ public class MovieController {
         return new ResponseEntity<>(movie, HttpStatus.CREATED);
     }
 
+//    EXTENSIONS
+//    update movie in the database
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Movie> updateMovie(@PathVariable int id, @RequestParam(value = "title") String title, @RequestParam(value = "rating") int rating, @RequestParam(value = "duration") int duration) {
+        if(movieService.getMovieById(id).isPresent()) {
+            movieService.updateMovie(id, title, rating, duration);
+            return new ResponseEntity<>(movieService.getMovieById(id).get(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        }
+    }
+
+//    delete movie from the database
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<String> deleteMovie(@PathVariable int id) {
+        if(movieService.getMovieById(id).isPresent()) {
+            movieService.deleteMovie(id);
+            return new ResponseEntity<>("Movie with id of " + id + "deleted.", HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(null, HttpStatus.NO_CONTENT);
+        }
+    }
+
 
 
 }
